@@ -23,7 +23,7 @@ struct BookData: Codable {
 //    var librarianNumber: String
 //    var bookCover: String?
 //    var isNewBook: Bool = false
-//    
+//
 //    private enum CodingKeys: String, CodingKey {
 //        case isbn, title, author, publisher, publishdate, copies, librarianNumber, bookCover
 //    }
@@ -40,7 +40,20 @@ struct Book: Codable, Identifiable {
     var librarianNumber: String
     var bookCover: String?
     var isNewBook: Bool = false
+    var isCameraPresented: Bool = false
     
+    var Pdate: Date {
+        get {
+            let dateFormatter = DateFormatter()
+            dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
+            return dateFormatter.date(from: publishdate) ?? Date()
+        }
+        set {
+            let dateFormatter = DateFormatter()
+            dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
+            publishdate = dateFormatter.string(from: newValue)
+        }
+    }
     
     private enum CodingKeys: String, CodingKey {
         case isbn, title, author, publisher, publishdate, copies, librarianNumber, bookCover

@@ -22,18 +22,18 @@ struct StorageView: View {
     @State var progress: Int = 0
     @State var colorNum: Int = 0
     
-    @State var currentStep = 2
+    @State var currentStep = 1
     let steps = ["扫描ISBN", "完善信息", "完成"]
     
     @State var ISBNs: [String] = ["ISBN7-305-02368-9", "ISBN7-377-02368-9", "ISBN7-389-02368-9"]
     //    @State var ISBNs: [String] = []
     //    @State var increaseNum: [Int] = [1, 2, 3]
     
-    
-    @State var Books: [Book] = [
-        Book(isbn: "", title: "qqq", author: "", publisher: "", publishdate: "", copies: 0, librarianNumber: "", isNewBook: true),
-        Book(isbn: "", title: "www", author: "", publisher: "", publishdate: "", copies: 0, librarianNumber: "", isNewBook: true),
-        Book(isbn: "", title: "eee", author: "", publisher: "", publishdate: "", copies: 0, librarianNumber: "", isNewBook: true)]
+    @State var Books: [Book] = []
+//    @State var Books: [Book] = [
+//        Book(isbn: "", title: "qqq", author: "", publisher: "", publishdate: "", copies: 0, librarianNumber: "", isNewBook: true),
+//        Book(isbn: "", title: "www", author: "", publisher: "", publishdate: "", copies: 0, librarianNumber: "", isNewBook: true),
+//        Book(isbn: "", title: "eee", author: "", publisher: "", publishdate: "", copies: 0, librarianNumber: "", isNewBook: true)]
     @State var receivBook: Book = Book(isbn: "", title: "", author: "", publisher: "", publishdate: "", copies: 0, librarianNumber: "")
     @State private var errorMessage: String?
     var body: some View {
@@ -84,6 +84,12 @@ struct StorageView: View {
                                             .disabled(true)
                                     }
                                     .padding(10)
+                                    HStack {
+                                        DatePicker("发布日期:", selection: $Books[index].Pdate, displayedComponents: .date)
+                                            .disabled(!Books[index].isNewBook)
+                                        Spacer(minLength: 60)
+                                    }
+                                    .padding(10)
                                     
                                     HStack {
                                         VStack {
@@ -102,29 +108,42 @@ struct StorageView: View {
                                             }
                                             .padding(10)
                                             HStack {
-                                                Text("发布日期: ")
-//                                                DatePicker("asd:", selection: $Books[index].publishdate)
-//                                                TextField("ISBN", text: $Books[index].publishdate)
-//                                                    .textFieldStyle(RoundedBorderTextFieldStyle())
-//                                                    .disabled(!Books[index].isNewBook)
+                                                
+                                                Stepper("册数： \(Books[index].copies)", value: $Books[index].copies)
                                             }
                                             .padding(10)
                                             
                                         }
-                                        AsyncImage(url: URL(string: Books[index].bookCover ?? "https://roy064.oss-cn-shanghai.aliyuncs.com/library/d9f704a4-9166-463b-943b-cb0558838c5d.jpg")) { image in
-                                                    image.resizable()
-                                                         .aspectRatio(contentMode: .fit)
-                                                } placeholder: {
-                                                    ProgressView()
+                                        Button {
+                                            Books[index].isCameraPresented = true
+                                        } label: {
+                                            AsyncImage(url: URL(string: Books[index].bookCover ?? "https://roy064.oss-cn-shanghai.aliyuncs.com/library/d9f704a4-9166-463b-943b-cb0558838c5d.jpg")) { image in
+                                                        image.resizable()
+                                                             .aspectRatio(contentMode: .fit)
+                                                    } placeholder: {
+                                                        ProgressView()
+                                                    }
+                                                    .frame(width: 150, height: 150)
+                                        }
+                                        .disabled(!Books[index].isNewBook)
+
+                                    }
+                                    .fullScreenCover(isPresented: $Books[index].isCameraPresented) {
+                                        CameraView(image: self.$image)
+                                            .onDisappear(perform: {
+                                                let networkService = NetworkService()
+                                                networkService.uploadFile(image: image ?? UIImage(imageLiteralResourceName: "info")){ result in
+                                                    switch result {
+                                                    case .success(let response):
+                                                        Books[index].bookCover = response.data
+                                                    case .failure(let error):
+                                                        self.errorMessage = error.localizedDescription
+                                                    }
                                                 }
-                                                .frame(width: 150, height: 150)
+                                                Books[index].isCameraPresented = false
+                                            })
                                     }
-                                    HStack {
-                                        
-                                        Stepper("册数： \(Books[index].copies)", value: $Books[index].copies)
-                                    }
-                                    .padding(.horizontal, 50)
-                                    .padding(.vertical, 10)
+                                    
                                     HStack {
                                         Button {
                                             
@@ -149,7 +168,7 @@ struct StorageView: View {
                                                 .fill(Color.red)
                                                 .frame(width: 150, height: 50)
                                                 .overlay {
-                                                    Text("Delete")
+                                                    Text("Cancel")
                                                         .foregroundColor(Color.white)
                                                         .bold()
                                                         .font(.system(size: 18))
@@ -249,6 +268,10 @@ struct StorageView: View {
             //
             //                        }
         }
+    }
+    
+    func uploadImg () {
+        
     }
     
     

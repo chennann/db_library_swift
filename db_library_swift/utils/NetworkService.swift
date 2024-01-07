@@ -9,6 +9,7 @@ import Foundation
 
 
 import Foundation
+import UIKit
 
 class NetworkService {
     
@@ -315,5 +316,83 @@ class NetworkService {
             }
         }.resume()
     }
+    
+    func compressImageTo1MB(_ image: UIImage) -> Data? {
+        var compressionQuality: CGFloat = 1.0
+        let maxFileSize = 100_000 // 1MB 的大小
+        var imageData = image.jpegData(compressionQuality: compressionQuality)
+
+        while (imageData?.count ?? 0) > maxFileSize && compressionQuality > 0 {
+            compressionQuality -= 0.1
+            imageData = image.jpegData(compressionQuality: compressionQuality)
+        }
+
+        return imageData
+    }
+    
+    func uploadFile(image: UIImage, completion: @escaping (Result<Response<String?>, Error>) -> Void) {
+        guard let url = URL(string: "https://47.115.229.197:8443/upload") else { return }
+
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+
+        let boundary = "Boundary-\(UUID().uuidString)"
+        request.setValue("multipart/form-data; boundary=\(boundary)", forHTTPHeaderField: "Content-Type")
+
+//        guard let imageData = image.jpegData(compressionQuality: 1.0) ?? image.pngData() else {
+//            completion(.failure(URLError(.badURL)))
+//            return
+//        }
+        guard let imageData = compressImageTo1MB(image) else {
+            completion(.failure(URLError(.badURL)))
+            return
+        }
+
+        var body = Data()
+
+        // 文件部分
+        body.append("--\(boundary)\r\n")
+        body.append("Content-Disposition: form-data; name=\"file\"; filename=\"image.jpg\"\r\n")
+        body.append("Content-Type: image/jpeg\r\n\r\n")
+        body.append(imageData)
+        body.append("\r\n")
+
+        // 请求结束标志
+        body.append("--\(boundary)--\r\n")
+
+        request.httpBody = body
+
+        // 如果需要，添加其他 HTTP 头部
+        if let token = UserDefaults.standard.string(forKey: "authToken") {
+            request.addValue(token, forHTTPHeaderField: "Authorization")
+        }
+
+        printRequestDetails(request: request)
+        
+        URLSession.shared.dataTask(with: request) { data, response, error in
+            if let error = error {
+                completion(.failure(error))
+                return
+            }
+
+            guard let data = data else { return }
+
+            // 新增：打印返回的原始数据
+            let dataString = String(data: data, encoding: .utf8)
+            print("Received data: \(dataString ?? "No data")")
+            
+            do {
+                let decodedResponse = try JSONDecoder().decode(Response<String?>.self, from: data)
+                DispatchQueue.main.async {
+                    completion(.success(decodedResponse))
+                }
+            } catch {
+                completion(.failure(error))
+            }
+        }.resume()
+    }
+
+
+
 }
 
