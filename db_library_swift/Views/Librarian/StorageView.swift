@@ -19,51 +19,120 @@ struct StorageView: View {
     @State var image: UIImage?
     
     
+    @State var progress: Int = 0
+    @State var colorNum: Int = 0
+    
+    @State var currentStep = 1
+    let steps = ["扫描ISBN", "完善信息", "完成"]
+    
+//    @State var ISBNs: [String] = ["ISBN7-305-02368-9", "ISBN7-306-02368-9", "ISBN7-309-02368-9"]
+    @State var ISBNs: [String] = []
+//    @State var increaseNum: [Int] = [1, 2, 3]
     var body: some View {
         
         VStack {
-            VStack {
-                Button("打开相机") {
-                    self.showCamera = true
-                }
-            }
-            .fullScreenCover(isPresented: $showCamera, onDismiss: textRecg) {
-                CameraView(image: self.$image)
-                    .onDisappear(perform: {
-                        textRecg()
-                    })
-            }
-            
-            //        VStack {
-            //
-            //            Button("打开相机") {
-            //                self.showCamera = true
-            //            }
-            //        }
-            //        .sheet(isPresented: $showCamera) {
-            //            CameraView(image: self.$image)
-            //                .onDisappear(perform: {
-            //                    textRecg()
-            //                })
-            //        }
-            
-            
-            VStack {
-                //            Image(uiImage: UIImage(named: name)!)
-                if let image = image {
-                    Image(uiImage: image)
-                        .resizable()
-                        .scaledToFit()
-                }
-                //这个循环是显示获取的文本
-                ForEach(textStrings, id: \.self) { testString in
-                    if isISBN(string: testString) {
-                        Text(testString) // 显示ISBN号码
+            ZStack {
+                if currentStep == 1 {
+                    VStack {
+                        Button {
+                            self.showCamera = true
+                        } label: {
+                            Image(systemName: "camera")
+                                .font(.system(size: 200))
+                                .bold()
+                                .foregroundColor(Color.gray)
+                        }
+                        Button {
+                            self.showCamera = true
+                        } label: {
+                            Text("手动输入ISBN")
+                        }
+                        .padding()
+                    }
+                    .fullScreenCover(isPresented: $showCamera) {
+                        CameraView(image: self.$image)
+                            .onDisappear(perform: {
+                                textRecg()
+                            })
                     }
                 }
+                else if currentStep == 2 {
+                    VStack {
+                        List {
+                            ForEach(ISBNs.indices, id: \.self) { index in
+                                HStack {
+                                    
+                                    TextField("ISBN", text: $ISBNs[index])
+                                        .textFieldStyle(RoundedBorderTextFieldStyle())
+                                        .padding(.vertical)
+                                    
+                                    
+                                }
+                            }
+                        }
+                        .frame(height: 600)
+                        .offset(y: 70)
+                    }
+                }
+                else if currentStep == 3 {
+                    VStack {
+                        
+                    }
+                }
+                VStack {
+                    ProgressBarView(step: currentStep)
+                        .padding(.horizontal, 20)
+                        .padding(.top, 50)
+                    HStack {
+                        ForEach(0..<steps.count, id: \.self) { index in
+                            Text(steps[index])
+                                .fontWeight(currentStep == index+1 ? .bold : .regular)
+                                .font(currentStep == index+1 ? .title : .body)
+                                .padding(.horizontal)
+                        }
+                    }
+                    Spacer()
+                }
+                .padding(.bottom, 100)
                 
-                
+//                VStack {
+//                    Spacer()
+//                    Button {
+//                        withAnimation {
+//                            currentStep = currentStep + 1
+//                        }
+//                    } label: {
+//                        Text("step + 1")
+//                    }
+//                    Button {
+//                        withAnimation {
+//                            currentStep = currentStep - 1
+//                        }
+//                    } label: {
+//                        Text("step - 1")
+//                    }
+//                }
             }
+            
+            
+            
+            
+//                        VStack {
+//                            //            Image(uiImage: UIImage(named: name)!)
+//                            if let image = image {
+//                                Image(uiImage: image)
+//                                    .resizable()
+//                                    .scaledToFit()
+//                            }
+//                            //这个循环是显示获取的文本
+//                            ForEach(textStrings, id: \.self) { testString in
+//                                if isISBN(string: testString) {
+//                                    Text(testString) // 显示ISBN号码
+//                                }
+//                            }
+//            
+//            
+//                        }
         }
     }
     
@@ -93,6 +162,10 @@ struct StorageView: View {
         } catch {
             print("Unable to perform the requests: \(error).")
         }
+        
+        withAnimation {
+            currentStep = currentStep + 1
+        }
     }
     //这个函数用来处理获取的文本
     func handleDetectedText(request: VNRequest?, error: Error?) {
@@ -115,7 +188,14 @@ struct StorageView: View {
                     //将results的结果放到textStrings数组中
                     let string = text.string
                     textStrings.append(string)
+                    
                 }
+            }
+        }
+        
+        for res in textStrings {
+            if isISBN(string: res) {
+                ISBNs.append(res)
             }
         }
     }

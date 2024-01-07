@@ -27,3 +27,24 @@ struct Book: Codable, Identifiable {
         case isbn, title, author, publisher, publishdate, copies, librarianNumber, bookCover
     }
 }
+
+
+struct BookCopiesData: Codable {
+    var total: Int
+    var items: [BookCopy]
+}
+
+struct BookCopy: Codable, Identifiable {
+    var id = UUID()
+    var title: String
+    var bookId: String
+    var isbn: String
+    var location: String
+    var status: String
+    var librarianNumber: String
+    
+    private enum CodingKeys: String, CodingKey {
+        case title, bookId, isbn, location, status, librarianNumber
+    }
+}
+

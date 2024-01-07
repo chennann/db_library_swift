@@ -11,11 +11,12 @@ import SwiftUI
 struct db_library_swiftApp: App {
     
     var loginManager = LoginManager()
-    
+    var sharedModel = SharedModel()
     var body: some Scene {
         WindowGroup {
             MainView()
                 .environmentObject(loginManager)
+                .environmentObject(sharedModel)
         }
     }
 }

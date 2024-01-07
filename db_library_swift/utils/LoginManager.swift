@@ -28,4 +28,10 @@ class LoginManager: ObservableObject {
         self.token = UserDefaults.standard.string(forKey: "authToken") ?? "default"
         self.role = UserDefaults.standard.string(forKey: "role") ?? "default"
     }
+    
+    func logout () {
+        isLoggedIn  = false
+        token = ""
+        role = ""
+    }
 }

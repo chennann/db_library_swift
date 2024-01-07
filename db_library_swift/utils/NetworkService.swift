@@ -96,13 +96,33 @@ class NetworkService {
         }.resume()
     }
     
-    func findBooks(pageNum: Int, pageSize: Int, title: String, completion: @escaping (Result<Response<BookData>, Error>) -> Void) {
+    func findBooks(pageNum: Int, pageSize: Int, title: String?, author: String?, isbn: String?, completion: @escaping (Result<Response<BookData>, Error>) -> Void) {
         guard var urlComponents = URLComponents(string: "https://47.115.229.197:8443/book/find") else { return }
-        urlComponents.queryItems = [
-            URLQueryItem(name: "pageNum", value: String(pageNum)),
-            URLQueryItem(name: "pageSize", value: String(pageSize)),
-            URLQueryItem(name: "title", value: title)
-        ]
+//        urlComponents.queryItems = [
+//            URLQueryItem(name: "pageNum", value: String(pageNum)),
+//            URLQueryItem(name: "pageSize", value: String(pageSize)),
+//            URLQueryItem(name: "title", value: title),
+//            URLQueryItem(name: "author", value: author),
+//            URLQueryItem(name: "isbn", value: isbn)
+//        ]
+        var queryItems: [URLQueryItem] = [
+                URLQueryItem(name: "pageNum", value: String(pageNum)),
+                URLQueryItem(name: "pageSize", value: String(pageSize))
+            ]
+            
+            if let title = title {
+                queryItems.append(URLQueryItem(name: "title", value: title))
+            }
+            
+            if let author = author {
+                queryItems.append(URLQueryItem(name: "author", value: author))
+            }
+
+            if let isbn = isbn {
+                queryItems.append(URLQueryItem(name: "isbn", value: isbn))
+            }
+        
+        urlComponents.queryItems = queryItems
         
         guard let url = urlComponents.url else { return }
         
@@ -140,5 +160,107 @@ class NetworkService {
     }
     
     
+    func bookcopyListService (pageNum: Int, pageSize: Int, title: String?, completion: @escaping (Result<Response<BookCopiesData>, Error>) -> Void) {
+        guard var urlComponents = URLComponents(string: "https://47.115.229.197:8443/copies/findcopies") else { return }
+//        urlComponents.queryItems = [
+//            URLQueryItem(name: "pageNum", value: String(pageNum)),
+//            URLQueryItem(name: "pageSize", value: String(pageSize)),
+//            URLQueryItem(name: "title", value: title),
+//            URLQueryItem(name: "author", value: author),
+//            URLQueryItem(name: "isbn", value: isbn)
+//        ]
+        var queryItems: [URLQueryItem] = [
+                URLQueryItem(name: "pageNum", value: String(pageNum)),
+                URLQueryItem(name: "pageSize", value: String(pageSize))
+            ]
+            
+            if let title = title {
+                queryItems.append(URLQueryItem(name: "bookName", value: title))
+            }
+            
+        
+        urlComponents.queryItems = queryItems
+        
+        guard let url = urlComponents.url else { return }
+        
+        var request = URLRequest(url: url)
+        request.httpMethod = "GET"
+        
+        if let token = UserDefaults.standard.string(forKey: "authToken") {
+            request.addValue(token, forHTTPHeaderField: "Authorization")
+        }
+        
+        printRequestDetails(request: request)
+        
+        URLSession.shared.dataTask(with: request) { data, response, error in
+            if let error = error {
+                completion(.failure(error))
+                return
+            }
+            
+            guard let data = data else { return }
+            
+            // 新增：打印返回的原始数据
+            let dataString = String(data: data, encoding: .utf8)
+            print("Received data: \(dataString ?? "No data")")
+            
+            do {
+                let decodedResponse = try JSONDecoder().decode(Response<BookCopiesData>.self, from: data)
+                DispatchQueue.main.async {
+                    completion(.success(decodedResponse))
+                }
+            } catch {
+                print("JSON Decode Error: \(error)")
+                completion(.failure(error))
+            }
+        }.resume()
+    }
+    
+    
+    func allocateService (bookId: String, To: String, completion: @escaping (Result<Response<String?>, Error>) -> Void) {
+        guard let url = URL(string: "https://47.115.229.197:8443/copies/allocate") else { return }
+        
+        var request = URLRequest(url: url)
+        request.httpMethod = "PUT"
+        request.addValue("application/json", forHTTPHeaderField: "Content-Type")
+        
+        let loginData = allocateStruct(bookId: bookId, location: To)
+            do {
+                let jsonData = try JSONEncoder().encode(loginData)
+                request.httpBody = jsonData
+            } catch {
+                completion(.failure(error))
+                return
+            }
+        
+        if let token = UserDefaults.standard.string(forKey: "authToken") {
+            request.addValue(token, forHTTPHeaderField: "Authorization")
+        }
+        
+        printRequestDetails(request: request)
+        
+        URLSession.shared.dataTask(with: request) { data, response, error in
+            if let error = error {
+                completion(.failure(error))
+                return
+            }
+            
+            guard let data = data else { return }
+            
+            
+            // 新增：打印返回的原始数据
+            let dataString = String(data: data, encoding: .utf8)
+            print("Received data: \(dataString ?? "No data")")
+            
+            do {
+                let decodedResponse = try JSONDecoder().decode(Response<String?>.self, from: data)
+                DispatchQueue.main.async {
+                    completion(.success(decodedResponse))
+                }
+            } catch {
+                completion(.failure(error))
+            }
+        }.resume()
+    }
 }
 

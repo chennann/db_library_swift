@@ -30,6 +30,13 @@
 		8F5CFC582B48668000967A91 /* ReaderBookView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F5CFC572B48668000967A91 /* ReaderBookView.swift */; };
 		8F5CFC5A2B4866B200967A91 /* librarianBookView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F5CFC592B4866B200967A91 /* librarianBookView.swift */; };
 		8F5CFC5C2B48670700967A91 /* StorageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F5CFC5B2B48670700967A91 /* StorageView.swift */; };
+		8F5CFC5F2B4950A900967A91 /* TopView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F5CFC5E2B4950A900967A91 /* TopView.swift */; };
+		8F5CFC612B49540900967A91 /* ProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F5CFC602B49540900967A91 /* ProfileView.swift */; };
+		8F5CFC632B4968ED00967A91 /* SharedModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F5CFC622B4968ED00967A91 /* SharedModel.swift */; };
+		8FF2E34B2B49814B001FD8C1 /* KeyboardManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FF2E34A2B49814B001FD8C1 /* KeyboardManager.swift */; };
+		8FF2E34D2B498A55001FD8C1 /* BookDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FF2E34C2B498A55001FD8C1 /* BookDetailView.swift */; };
+		8FF2E34F2B49A599001FD8C1 /* SendStruct.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FF2E34E2B49A599001FD8C1 /* SendStruct.swift */; };
+		8FF2E3512B49B00E001FD8C1 /* ProgressBarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FF2E3502B49B00E001FD8C1 /* ProgressBarView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -54,6 +61,13 @@
 		8F5CFC572B48668000967A91 /* ReaderBookView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReaderBookView.swift; sourceTree = "<group>"; };
 		8F5CFC592B4866B200967A91 /* librarianBookView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = librarianBookView.swift; sourceTree = "<group>"; };
 		8F5CFC5B2B48670700967A91 /* StorageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StorageView.swift; sourceTree = "<group>"; };
+		8F5CFC5E2B4950A900967A91 /* TopView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TopView.swift; sourceTree = "<group>"; };
+		8F5CFC602B49540900967A91 /* ProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileView.swift; sourceTree = "<group>"; };
+		8F5CFC622B4968ED00967A91 /* SharedModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharedModel.swift; sourceTree = "<group>"; };
+		8FF2E34A2B49814B001FD8C1 /* KeyboardManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyboardManager.swift; sourceTree = "<group>"; };
+		8FF2E34C2B498A55001FD8C1 /* BookDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookDetailView.swift; sourceTree = "<group>"; };
+		8FF2E34E2B49A599001FD8C1 /* SendStruct.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SendStruct.swift; sourceTree = "<group>"; };
+		8FF2E3502B49B00E001FD8C1 /* ProgressBarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProgressBarView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -94,10 +108,6 @@
 				8F5CFC5D2B4868BB00967A91 /* Views */,
 				8F5CFC502B4862C200967A91 /* utils */,
 				8F5CFC052B46C73900967A91 /* db_library_swiftApp.swift */,
-				8F5CFC462B47E92300967A91 /* LoginView.swift */,
-				8F5CFC442B47E72200967A91 /* librarianView.swift */,
-				8F5CFC482B47F6E300967A91 /* MainView.swift */,
-				8F5CFC4C2B48568900967A91 /* readerView.swift */,
 				8F5CFC422B471A0200967A91 /* tt.swift */,
 				8F5CFC332B470B1E00967A91 /* ResponseStruct */,
 				8F5CFC092B46C73A00967A91 /* Assets.xcassets */,
@@ -119,6 +129,7 @@
 			children = (
 				8F5CFC352B470B5A00967A91 /* Response.swift */,
 				8F5CFC372B470B7100967A91 /* Book.swift */,
+				8FF2E34E2B49A599001FD8C1 /* SendStruct.swift */,
 			);
 			path = ResponseStruct;
 			sourceTree = "<group>";
@@ -127,6 +138,7 @@
 			isa = PBXGroup;
 			children = (
 				8F5CFC592B4866B200967A91 /* librarianBookView.swift */,
+				8FF2E34C2B498A55001FD8C1 /* BookDetailView.swift */,
 				8F5CFC5B2B48670700967A91 /* StorageView.swift */,
 			);
 			path = Librarian;
@@ -147,8 +159,11 @@
 			isa = PBXGroup;
 			children = (
 				8F5CFC392B470D0500967A91 /* NetworkService.swift */,
+				8FF2E34A2B49814B001FD8C1 /* KeyboardManager.swift */,
 				8F5CFC4A2B483FD100967A91 /* LoginManager.swift */,
 				8F5CFC3C2B4710E900967A91 /* CameraView.swift */,
+				8F5CFC622B4968ED00967A91 /* SharedModel.swift */,
+				8FF2E3502B49B00E001FD8C1 /* ProgressBarView.swift */,
 			);
 			path = utils;
 			sourceTree = "<group>";
@@ -156,6 +171,12 @@
 		8F5CFC5D2B4868BB00967A91 /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				8F5CFC442B47E72200967A91 /* librarianView.swift */,
+				8F5CFC5E2B4950A900967A91 /* TopView.swift */,
+				8F5CFC4C2B48568900967A91 /* readerView.swift */,
+				8F5CFC602B49540900967A91 /* ProfileView.swift */,
+				8F5CFC482B47F6E300967A91 /* MainView.swift */,
+				8F5CFC462B47E92300967A91 /* LoginView.swift */,
 				8F5CFC4E2B48629C00967A91 /* Librarian */,
 				8F5CFC4F2B4862AA00967A91 /* Reader */,
 			);
@@ -245,8 +266,12 @@
 				8F5CFC542B48664200967A91 /* BorrowView.swift in Sources */,
 				8F5CFC5C2B48670700967A91 /* StorageView.swift in Sources */,
 				8F5CFC382B470B7100967A91 /* Book.swift in Sources */,
+				8F5CFC632B4968ED00967A91 /* SharedModel.swift in Sources */,
+				8FF2E3512B49B00E001FD8C1 /* ProgressBarView.swift in Sources */,
+				8FF2E34B2B49814B001FD8C1 /* KeyboardManager.swift in Sources */,
 				8F5CFC522B48655300967A91 /* InboxView.swift in Sources */,
 				8F5CFC432B471A0200967A91 /* tt.swift in Sources */,
+				8FF2E34D2B498A55001FD8C1 /* BookDetailView.swift in Sources */,
 				8F5CFC4B2B483FD100967A91 /* LoginManager.swift in Sources */,
 				8F5CFC4D2B48568900967A91 /* readerView.swift in Sources */,
 				8F5CFC3D2B4710E900967A91 /* CameraView.swift in Sources */,
@@ -257,6 +282,9 @@
 				8F5CFC562B48664E00967A91 /* ReservationView.swift in Sources */,
 				8F5CFC472B47E92300967A91 /* LoginView.swift in Sources */,
 				8F5CFC5A2B4866B200967A91 /* librarianBookView.swift in Sources */,
+				8F5CFC612B49540900967A91 /* ProfileView.swift in Sources */,
+				8FF2E34F2B49A599001FD8C1 /* SendStruct.swift in Sources */,
+				8F5CFC5F2B4950A900967A91 /* TopView.swift in Sources */,
 				8F5CFC452B47E72200967A91 /* librarianView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
