@@ -12,6 +12,23 @@ struct BookData: Codable {
     var items: [Book]
 }
 
+//struct precheckedBook: Codable, Identifiable {
+//    var id = UUID()
+//    var isbn: String
+//    var title: String
+//    var author: String
+//    var publisher: String
+//    var publishdate: String
+//    var copies: Int
+//    var librarianNumber: String
+//    var bookCover: String?
+//    var isNewBook: Bool = false
+//    
+//    private enum CodingKeys: String, CodingKey {
+//        case isbn, title, author, publisher, publishdate, copies, librarianNumber, bookCover
+//    }
+//}
+
 struct Book: Codable, Identifiable {
     var id = UUID()
     var isbn: String
@@ -22,6 +39,8 @@ struct Book: Codable, Identifiable {
     var copies: Int
     var librarianNumber: String
     var bookCover: String?
+    var isNewBook: Bool = false
+    
     
     private enum CodingKeys: String, CodingKey {
         case isbn, title, author, publisher, publishdate, copies, librarianNumber, bookCover

@@ -65,7 +65,7 @@ struct librarianBookView: View {
                                         }
                                     }
                                 }
-                                .navigationTitle("asdasdasd")
+                                .navigationBarBackButtonHidden(true)
                                 
                                 
                             }

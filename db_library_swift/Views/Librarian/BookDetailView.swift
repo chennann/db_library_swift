@@ -63,12 +63,7 @@ struct BookDetailView: View {
                         Picker(selection: binding,
                                label:
                                 HStack {
-                            Text("asd:")
-                                .font(.headline)
-                                .foregroundColor(.white)
-                                .padding()
-                                .background(Color.blue)
-                                .cornerRadius(10)
+                            
                         },
                                content: {
                             ForEach (locations, id: \.self) { option in

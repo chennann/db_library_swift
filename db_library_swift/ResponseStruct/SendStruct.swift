@@ -13,6 +13,9 @@ struct allocateStruct: Codable {
     var location: String
 }
 
+struct precheckStruct: Codable {
+    var isbn: String
+}
 
 class increaseBook: ObservableObject {
     var isbn: String

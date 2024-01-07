@@ -262,5 +262,58 @@ class NetworkService {
             }
         }.resume()
     }
+    
+    
+    func bookPrecheckService (isbn: String, completion: @escaping (Result<Response<Book>, Error>) -> Void) {
+        guard let url = URL(string: "https://47.115.229.197:8443/book/add/precheck") else { return }
+        
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        request.addValue("application/json", forHTTPHeaderField: "Content-Type")
+        
+        let loginData = precheckStruct(isbn: isbn)
+            do {
+                let jsonData = try JSONEncoder().encode(loginData)
+                request.httpBody = jsonData
+            } catch {
+                completion(.failure(error))
+                return
+            }
+        
+        if let token = UserDefaults.standard.string(forKey: "authToken") {
+            request.addValue(token, forHTTPHeaderField: "Authorization")
+        }
+        
+        printRequestDetails(request: request)
+        
+        URLSession.shared.dataTask(with: request) { data, response, error in
+            if let error = error {
+                completion(.failure(error))
+                return
+            }
+            
+            guard let data = data else { return }
+            
+            
+            // 新增：打印返回的原始数据
+            let dataString = String(data: data, encoding: .utf8)
+            print("Received data: \(dataString ?? "No data")")
+            
+            do {
+                let decodedResponse = try JSONDecoder().decode(Response<Book>.self, from: data)
+                DispatchQueue.main.async {
+                    completion(.success(decodedResponse))
+                }
+            } catch {
+                
+                let defaultBook = Book(isbn: isbn, title: "", author: "", publisher: "", publishdate: "", copies: 1, librarianNumber: "", isNewBook: true)
+                let newBookResponse = Response<Book>(code: 0, message: error.localizedDescription, data: defaultBook)
+                DispatchQueue.main.async {
+                    completion(.success(newBookResponse))
+                }
+//                completion(.failure(error))
+            }
+        }.resume()
+    }
 }
 
