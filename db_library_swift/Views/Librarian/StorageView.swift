@@ -51,7 +51,7 @@ struct StorageView: View {
                                 .foregroundColor(Color.gray)
                         }
                         Button {
-                            self.showCamera = true
+                            currentStep += 1
                         } label: {
                             Text("手动输入ISBN")
                         }
@@ -72,7 +72,7 @@ struct StorageView: View {
                                 VStack {
                                     HStack {
                                         Text("书名: ")
-                                        TextField("ISBN", text: $Books[index].title)
+                                        TextField("书名", text: $Books[index].title)
                                             .textFieldStyle(RoundedBorderTextFieldStyle())
                                             .disabled(!Books[index].isNewBook)
                                     }
@@ -81,7 +81,7 @@ struct StorageView: View {
                                         Text("ISBN: ")
                                         TextField("ISBN", text: $Books[index].isbn)
                                             .textFieldStyle(RoundedBorderTextFieldStyle())
-                                            .disabled(true)
+                                            .disabled(!Books[index].isNewBook)
                                     }
                                     .padding(10)
                                     HStack {
@@ -95,14 +95,14 @@ struct StorageView: View {
                                         VStack {
                                             HStack {
                                                 Text("作者: ")
-                                                TextField("ISBN", text: $Books[index].author)
+                                                TextField("作者", text: $Books[index].author)
                                                     .textFieldStyle(RoundedBorderTextFieldStyle())
                                                     .disabled(!Books[index].isNewBook)
                                             }
                                             .padding(10)
                                             HStack {
                                                 Text("发行商: ")
-                                                TextField("ISBN", text: $Books[index].publisher)
+                                                TextField("发行商", text: $Books[index].publisher)
                                                     .textFieldStyle(RoundedBorderTextFieldStyle())
                                                     .disabled(!Books[index].isNewBook)
                                             }
@@ -117,13 +117,20 @@ struct StorageView: View {
                                         Button {
                                             Books[index].isCameraPresented = true
                                         } label: {
-                                            AsyncImage(url: URL(string: Books[index].bookCover ?? "https://roy064.oss-cn-shanghai.aliyuncs.com/library/d9f704a4-9166-463b-943b-cb0558838c5d.jpg")) { image in
-                                                        image.resizable()
-                                                             .aspectRatio(contentMode: .fit)
-                                                    } placeholder: {
-                                                        ProgressView()
-                                                    }
+                                            if Books[index].coverIsLoading {
+                                                ProgressView()
                                                     .frame(width: 150, height: 150)
+                                            }
+                                            else {
+                                                AsyncImage(url: URL(string: Books[index].bookCover ?? "https://roy064.oss-cn-shanghai.aliyuncs.com/library/75694086-f111-4c5b-ad7c-f2bff521c302.png")) { image in
+                                                            image.resizable()
+                                                                 .aspectRatio(contentMode: .fit)
+                                                        } placeholder: {
+                                                            ProgressView()
+                                                        }
+                                                        .frame(width: 150, height: 150)
+                                            }
+                                            
                                         }
                                         .disabled(!Books[index].isNewBook)
 
@@ -131,9 +138,16 @@ struct StorageView: View {
                                     .fullScreenCover(isPresented: $Books[index].isCameraPresented) {
                                         CameraView(image: self.$image)
                                             .onDisappear(perform: {
+                                                
+                                                withAnimation {
+                                                    Books[index].coverIsLoading = true
+                                                }
+                                                
                                                 let networkService = NetworkService()
                                                 networkService.uploadFile(image: image ?? UIImage(imageLiteralResourceName: "info")){ result in
+                                                    defer { Books[index].coverIsLoading = false }
                                                     switch result {
+                                                        
                                                     case .success(let response):
                                                         Books[index].bookCover = response.data
                                                     case .failure(let error):
@@ -146,10 +160,11 @@ struct StorageView: View {
                                     
                                     HStack {
                                         Button {
-                                            
+                                            addBook(book: Books[index])
+                                            Books.remove(at: index)
                                         } label: {
                                             RoundedRectangle(cornerRadius: 10)
-                                                .fill(Color.blue)
+                                                .fill((Books[index].title == "" || Books[index].isbn == "" || Books[index].author == "" || Books[index].publisher == "" || Books[index].publishdate == "") ? Color.gray.opacity(0.3) : Color.blue)
                                                 .frame(width: 150, height: 50)
                                                 .overlay {
                                                     Text("Add")
@@ -158,10 +173,16 @@ struct StorageView: View {
                                                         .font(.system(size: 18))
                                                 }
                                         }
+                                        .disabled(Books[index].title == "" || Books[index].isbn == "" || Books[index].author == "" || Books[index].publisher == "" || Books[index].publishdate == "")
                                         Spacer()
                                         Button {
                                         
-                                                Books.remove(at: index)
+                                            Books.remove(at: index)
+                                            if Books.count == 0 {
+                                                withAnimation {
+                                                    currentStep += 1
+                                                }
+                                            }
                                             
                                         } label: {
                                             RoundedRectangle(cornerRadius: 10)
@@ -186,6 +207,47 @@ struct StorageView: View {
                                 )
                                 .padding()
                             }
+                            HStack {
+                                Button {
+                                    withAnimation {
+                                        currentStep -= 1
+                                        Books =  []
+                                    }
+                                } label: {
+                                    Image(systemName: "arrow.left")
+                                        .bold()
+                                        .font(.system(size: 20))
+                                        .foregroundStyle(Color.white)
+                                        .background {
+                                            RoundedRectangle(cornerRadius: 10)
+                                                .fill(Color.gray)
+                                                .frame(width: 110, height: 50)
+                                                .shadow(color: Color.gray.opacity(0.4), radius: 8, x: 0 , y: 5)
+                                        }
+                                }
+                                Spacer()
+                                Button {
+                                    withAnimation {
+                                        currentStep += 1
+                                        
+                                    }
+                                } label: {
+                                    Image(systemName: "arrow.right")
+                                        .bold()
+                                        .font(.system(size: 20))
+                                        .foregroundStyle(Color.white)
+                                        .background {
+                                            RoundedRectangle(cornerRadius: 10)
+                                                .fill(Color.green)
+                                                .frame(width: 110, height: 50)
+                                                .shadow(color: Color.green.opacity(0.4), radius: 8, x: 0 , y: 5)
+                                        }
+                                }
+
+                            }
+                            .padding(.horizontal, 100)
+                            .padding(.top, 20)
+                            .padding(.bottom, 30)
                         }
                     }
                     .frame(height: 600)
@@ -207,10 +269,43 @@ struct StorageView: View {
                     //                        .frame(height: 600)
                     //                        .offset(y: 70)
                     //                    }
+                    
+                    
                 }
                 else if currentStep == 3 {
                     VStack {
                         
+                        HStack {
+                            Image(systemName: "checkmark.circle")
+                                .foregroundColor(.green)
+                                .font(.system(size: 100))
+                            VStack {
+                                Text("📖入库完成")
+                                Text("🚀精彩的入库")
+                            }
+                            .bold()
+                            .font(.system(size: 20))
+                        }
+                        .padding(.top, 330)
+                        Spacer()
+                        Button {
+                            withAnimation {
+                                currentStep = 1
+                                Books = []
+                            }
+                        } label: {
+                            RoundedRectangle(cornerRadius: 10)
+                                .fill(Color.blue)
+                                .frame(width: 250, height: 50)
+                                .overlay {
+                                    Text("确定")
+                                        .foregroundColor(Color.white)
+                                        .bold()
+                                        .font(.system(size: 18))
+                                }
+                        }
+                        .padding(.bottom, 50)
+
                     }
                 }
                 VStack {
@@ -270,9 +365,20 @@ struct StorageView: View {
         }
     }
     
-    func uploadImg () {
-        
+    
+    func addBook (book: Book) {
+//        print(book)
+        let networkService = NetworkService()
+        networkService.addBookService(book: book) { result in
+            switch result {
+            case .success(let response):
+                print(response.message)
+            case .failure(let error):
+                self.errorMessage = error.localizedDescription
+            }
+        }
     }
+    
     
     
     func bookPrecheck (isbn: String) {

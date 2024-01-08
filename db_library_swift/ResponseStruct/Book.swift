@@ -41,6 +41,7 @@ struct Book: Codable, Identifiable {
     var bookCover: String?
     var isNewBook: Bool = false
     var isCameraPresented: Bool = false
+    var coverIsLoading: Bool = false
     
     var Pdate: Date {
         get {

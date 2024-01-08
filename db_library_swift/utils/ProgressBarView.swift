@@ -10,7 +10,7 @@ import SwiftUI
 struct ProgressBarView: View {
     
     var step: Int = 0
-    var colorSet: [Color] = [Color.yellow, Color.green, Color.orange, Color.red, Color.blue]
+    var colorSet: [Color] = [Color.yellow, Color.yellow, Color.blue, Color.green, Color.green]
     private let maxProgress = 3
 
     var body: some View {

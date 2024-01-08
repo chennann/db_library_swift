@@ -392,7 +392,51 @@ class NetworkService {
         }.resume()
     }
 
-
+    func addBookService (book: Book, completion: @escaping (Result<Response<String?>, Error>) -> Void) {
+        guard let url = URL(string: "https://47.115.229.197:8443/book/add") else { return }
+        
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        request.addValue("application/json", forHTTPHeaderField: "Content-Type")
+        
+        
+            do {
+                let jsonData = try JSONEncoder().encode(book)
+                request.httpBody = jsonData
+            } catch {
+                completion(.failure(error))
+                return
+            }
+        
+        if let token = UserDefaults.standard.string(forKey: "authToken") {
+            request.addValue(token, forHTTPHeaderField: "Authorization")
+        }
+        
+        printRequestDetails(request: request)
+        
+        URLSession.shared.dataTask(with: request) { data, response, error in
+            if let error = error {
+                completion(.failure(error))
+                return
+            }
+            
+            guard let data = data else { return }
+            
+            
+            // 新增：打印返回的原始数据
+            let dataString = String(data: data, encoding: .utf8)
+            print("Received data: \(dataString ?? "No data")")
+            
+            do {
+                let decodedResponse = try JSONDecoder().decode(Response<String?>.self, from: data)
+                DispatchQueue.main.async {
+                    completion(.success(decodedResponse))
+                }
+            } catch {
+                completion(.failure(error))
+            }
+        }.resume()
+    }
 
 }
 

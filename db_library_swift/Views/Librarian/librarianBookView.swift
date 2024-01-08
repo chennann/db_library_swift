@@ -49,7 +49,7 @@ struct librarianBookView: View {
                                     BookDetailView(title: book.title, isbn: book.isbn)
                                 } label: {
                                     HStack {
-                                        AsyncImage(url: URL(string: book.bookCover ?? "https://roy064.oss-cn-shanghai.aliyuncs.com/library/d9f704a4-9166-463b-943b-cb0558838c5d.jpg")) { image in
+                                        AsyncImage(url: URL(string: book.bookCover ?? "https://roy064.oss-cn-shanghai.aliyuncs.com/library/75694086-f111-4c5b-ad7c-f2bff521c302.png")) { image in
                                                     image.resizable()
                                                          .aspectRatio(contentMode: .fit)
                                                 } placeholder: {
@@ -195,7 +195,7 @@ struct librarianBookView: View {
         }
         
         let networkService = NetworkService()
-        networkService.findBooks(pageNum: 1, pageSize: 10, title: title.isEmpty ? nil : title, author: author.isEmpty ? nil : author, isbn: isbn.isEmpty ? nil : isbn) { result in
+        networkService.findBooks(pageNum: 1, pageSize: 100, title: title.isEmpty ? nil : title, author: author.isEmpty ? nil : author, isbn: isbn.isEmpty ? nil : isbn) { result in
             defer { isloading = false }
             switch result {
             case .success(let response):

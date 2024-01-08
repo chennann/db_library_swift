@@ -45,7 +45,7 @@ struct BookDetailView: View {
             .padding(.horizontal)
             if !bookcopies.isEmpty {
                 List(bookcopies) { book in
-                    
+                        
                     let bookId = book.bookId // 确保这是直接访问的属性
                     let binding = Binding<String>(
                         get: { self.selectedLocations[bookId, default: book.location] },
@@ -95,10 +95,12 @@ struct BookDetailView: View {
             
             
             
+            
         }
         .onAppear(perform: {
             bookcopyList()
         })
+        .navigationBarBackButtonHidden(true)  // 隐藏默认的返回按钮
         
     }
     

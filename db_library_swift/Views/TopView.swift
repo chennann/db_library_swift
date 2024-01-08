@@ -10,6 +10,7 @@ import SwiftUI
 struct TopView: View {
     
     @EnvironmentObject var sharedModel: SharedModel
+    @EnvironmentObject var loginManager: LoginManager
     
     @State private var showUser = false
     @State private var showMenu = false
@@ -35,13 +36,23 @@ struct TopView: View {
                 Button (action:{
                     showUser = true;
                 }) {
-                    Image(systemName: "person.crop.circle")
-                        .resizable()
-                        .aspectRatio(contentMode: .fit)
-                        .frame(width: 40, height: 40)
-                        .foregroundColor(Color.white.opacity(0.6))
-                        .clipShape(Circle())
-                        .padding(.trailing, 5)
+                    
+                    if (loginManager.role == "librarian") {
+                        Image(systemName: "person.badge.key.fill")
+                            .font(.system(size: 30))
+                            .frame(width: 40, height: 40)
+                            .foregroundColor(Color.white.opacity(0.6))
+                            .padding(.trailing, 5)
+                    }
+                    else {
+                        Image(systemName: "person.fill")
+                            .font(.system(size: 30))
+                            .frame(width: 40, height: 40)
+                            .foregroundColor(Color.white.opacity(0.6))
+                            .padding(.trailing, 5)
+                    }
+                    
+                    
                 }
                 .sheet(isPresented: $showUser) {
                     ProfileView()
@@ -56,4 +67,6 @@ struct TopView: View {
 
 #Preview {
     TopView()
+        .environmentObject(LoginManager())
+        .environmentObject(SharedModel())
 }
